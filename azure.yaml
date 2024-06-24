@@ -10,3 +10,9 @@ services:
     project: ./src/api/
     language: dotnet
     host: function
+hooks:
+  postprovision:
+    shell: sh
+    continueOnError: false
+    interactive: true
+    run: ./infra/hooks/postprovision.sh

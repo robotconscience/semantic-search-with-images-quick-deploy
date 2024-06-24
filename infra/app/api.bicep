@@ -40,7 +40,7 @@ module api '../core/host/functions.bicep' = {
       AiVisionOptions__MultimodalEmbeddingsModelVersion: '2023-04-15'
       AiSearchOptions__Key: existingSearchService.listAdminKeys().primaryKey
       AiSearchOptions__Endpoint: 'https://${existingSearchService.name}.search.windows.net/'
-      AiSearchOptions__IndexName: 'semantic-search-images-v'
+      AiSearchOptions__IndexName: 'met-openaccess-v'
       AiSearchOptions__IndexImageVectorsFieldName: 'VectorizedImage'
       AiSearchOptions__TopNCount: 3
     }

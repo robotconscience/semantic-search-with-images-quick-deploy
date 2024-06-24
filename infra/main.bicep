@@ -20,6 +20,25 @@ param location string
 // }
 param resourceGroupName string = ''
 
+@minLength(1)
+@description('Query key for read-only access to the source AI Search resource')
+@secure()
+param sourceSearchKey string
+@minLength(1)
+@description('Name of the source AI Search resource')
+param sourceSearchName string
+@minLength(1)
+@description('Name of the source AI Search index to clone')
+param sourceSearchIndexName string
+
+// To help with post-provisioning access to secrets, grant the current
+// principal get/list secrets permissions so that we don't expose keys.
+@description('Principal ID of the user running the azd up command (for Key Vault access)')
+param currentPrincipalId string = ''
+
+// The secret name in Key Vault to store the source AI Search key
+var sourceSearchKeySecretName = 'source-ai-search-key'
+
 var abbrs = loadJsonContent('./abbreviations.json')
 
 // tags that should be applied to all resources.
@@ -41,6 +60,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 // AI Vision (Computer Vision) resource for multimodal embeddings
+
 module vision 'core/ai/cognitiveservices.bicep' = {
   name: 'ai-vision'
   scope: rg
@@ -76,6 +96,19 @@ module keyVault './core/security/keyvault.bicep' = {
     name: '${abbrs.keyVaultVaults}${resourceToken}'
     location: location
     tags: tags
+    principalId: currentPrincipalId // Grants the current user access to KV secrets
+  }
+}
+
+// Key Vault Secret for query key
+
+module keyVaultSecret './core/security/keyvault-secret.bicep' = {
+  scope: rg
+  name: 'keyvault-secret'
+  params: {
+    keyVaultName: keyVault.outputs.name
+    name: sourceSearchKeySecretName
+    secretValue: sourceSearchKey
   }
 }
 
@@ -152,4 +185,10 @@ module api './app/api.bicep' = {
 // To see these outputs, run `azd env get-values`,  or `azd env get-values --output json` for json output.
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
-
+output AZURE_RESOURCE_GROUP string = rg.name
+output SOURCE_AI_SEARCH_KEY_SECRET_NAME string = sourceSearchKeySecretName
+output SOURCE_AI_SEARCH_ENDPOINT string = 'https://${sourceSearchName}.search.windows.net'
+output SOURCE_AI_SEARCH_INDEX_NAME string = sourceSearchIndexName
+output TARGET_AI_SEARCH_ENDPOINT string = search.outputs.endpoint
+output TARGET_AI_SEARCH_NAME string = search.outputs.name
+output KEYVAULT_NAME string = keyVault.outputs.name

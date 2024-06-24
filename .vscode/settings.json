@@ -1,0 +1,4 @@
+{
+    "dotnet.defaultSolution": "disable",
+    "azureFunctions.projectSubpath": "src/api"
+}
