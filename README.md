@@ -39,10 +39,6 @@ This solution includes two applications:
 
 - A [dev container](https://containers.dev) configuration file under the `.devcontainer` directory that installs infrastructure tooling by default. This can be readily used to create cloud-hosted developer environments such as [GitHub Codespaces](https://aka.ms/codespaces).
 
-### Continuous deployment workflows
-
-- Continuous deployment workflows for CI providers such as GitHub Actions under the `.github` directory, and Azure Pipelines under the `.azdo` directory that work for most use-cases.
-
 ## Deploy up to Azure
 
 ### Step 1: Authenticate to your environment
