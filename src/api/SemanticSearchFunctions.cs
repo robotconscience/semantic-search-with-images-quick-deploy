@@ -150,7 +150,7 @@ public class SemanticSearchFunctions(
                 {
                     new VectorizedQuery(queryEmbeddings) 
                     { 
-                        KNearestNeighborsCount = 3, 
+                        KNearestNeighborsCount = 50, 
                         Fields = 
                         { 
                             _searchOptions.IndexImageVectorsFieldName
